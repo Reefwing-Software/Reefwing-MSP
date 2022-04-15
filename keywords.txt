@@ -1,0 +1,25 @@
+#######################################
+# IDE Map for Nexgen MSP
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+NexgenMSP KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+send	KEYWORD2
+recv	KEYWORD2
+waitFor	KEYWORD2
+request	KEYWORD2
+command	KEYWORD2
+getActiveModes	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
