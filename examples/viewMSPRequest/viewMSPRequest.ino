@@ -39,7 +39,7 @@ void commandFromSerial(char *cmd) {
     while (Serial.available()) {
         char letter = (char)Serial.read();
 
-        if (char == '\n') {
+        if (letter == '\n') {
             //  NL character - discard
         }
         else if (index < MAX_CMD_SIZE - 1) {
@@ -47,7 +47,7 @@ void commandFromSerial(char *cmd) {
           index++;
         }
         else {
-            Serial.println("ERROR - command has too many characters")
+            Serial.println("ERROR - command has too many characters");
         }
     }
 
@@ -62,7 +62,7 @@ void printInstructions() {
   Serial.println("This example, allows you to see MSP messages in the Serial Monitor.");
   Serial.println("Choose newLine from pulldown menu in the Serial Monitor.")
   Serial.println("Enter the message ID (e.g., MSP_API_VERSION) to see that message");
-  Serial.println("displayed. Valid message ID's may be found in the Protocol.h file.")
+  Serial.println("displayed. Valid message ID's may be found in the Protocol.h file.");
 }
 
 void setup() {
