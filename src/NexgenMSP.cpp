@@ -19,14 +19,13 @@
 
 #include <Arduino.h>
 
-#include "MSP.h"
+#include "NexgenMSP.h"
 
 
 void NexgenMSP::begin(Stream & stream, uint32_t timeout) {
   _stream   = &stream;
   _timeout  = timeout;
 }
-
 
 void NexgenMSP::reset() {
   _stream->flush();
@@ -51,7 +50,6 @@ void NexgenMSP::send(uint8_t messageID, void * payload, uint8_t size) {
   }
   _stream->write(checksum);
 }
-
 
 // timeout in milliseconds
 bool NexgenMSP::recv(uint8_t * messageID, void * payload, uint8_t maxSize, uint8_t * recvSize) {
@@ -130,7 +128,6 @@ bool NexgenMSP::request(uint8_t messageID, void * payload, uint8_t maxSize, uint
   return waitFor(messageID, payload, maxSize, recvSize);
 }
 
-
 // send message and wait for ack
 bool NexgenMSP::command(uint8_t messageID, void * payload, uint8_t size, bool waitACK) {
   send(messageID, payload, size);
@@ -141,7 +138,6 @@ bool NexgenMSP::command(uint8_t messageID, void * payload, uint8_t size, bool wa
   
   return true;
 }
-
 
 // map MSP_MODE_xxx to box ids
 // mixed values from cleanflight and inav
@@ -177,7 +173,6 @@ static const uint8_t BOXIDS[30] PROGMEM = {
   36, // 28: MSP_MODE_NAVLAUNCH
   37, // 29: MSP_MODE_AUTOTRIM
 };
-
 
 // returns active mode (using MSP_STATUS and MSP_BOXIDS messages)
 // see MSP_MODE_... for bits inside activeModes

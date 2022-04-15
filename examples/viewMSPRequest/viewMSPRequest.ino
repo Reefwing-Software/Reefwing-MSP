@@ -80,13 +80,14 @@ void loop() {
   commandFromSerial(cmd);
 
   //  Parse command and send MSP message to Serial if valid
-  if (cmd)
-  switch(idFromString(cmd)) {
-      case MSP_API_VERSION:
-        msp.send(MSP_API_VERSION, NULL, 0);
-        break;
-      case BAD_ID:
-        Serial.println("Command String not recognized.");
-        break;
+  if (!strcmp(cmd, "")) {
+    switch(idFromString(cmd)) {
+        case MSP_API_VERSION:
+          msp.send(MSP_API_VERSION, NULL, 0);
+          break;
+        case BAD_ID:
+          Serial.println("Command String not recognized.");
+          break;
+    }
   }
 }
