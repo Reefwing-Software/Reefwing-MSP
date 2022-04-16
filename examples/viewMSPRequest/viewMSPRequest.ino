@@ -31,9 +31,9 @@
 
 NexgenMSP msp;
 
-char cmd[MAX_CMD_SIZE];
+char cmdString[MAX_CMD_SIZE];
 
-void commandFromSerial(char *cmd) {
+void commandFromSerial(char *cmdString) {
     int index = 0;
 
     while (Serial.available()) {
@@ -43,7 +43,7 @@ void commandFromSerial(char *cmd) {
             //  NL character - discard
         }
         else if (index < MAX_CMD_SIZE - 1) {
-          cmd[index] = letter;
+          cmdString[index] = letter;
           index++;
         }
         else {
@@ -52,7 +52,7 @@ void commandFromSerial(char *cmd) {
     }
 
     // C strings are terminated with the null character 
-    cmd[index] = '\0';  
+    cmdString[index] = '\0';  
 }
 
 void printInstructions() {
@@ -60,7 +60,7 @@ void printInstructions() {
   Serial.println("                 Nexgen MSP - View Request");
   Serial.println("******************************************************************\n");
   Serial.println("This example, allows you to see MSP messages in the Serial Monitor.");
-  Serial.println("Choose newLine from pulldown menu in the Serial Monitor.")
+  Serial.println("Choose newLine from pulldown menu in the Serial Monitor.");
   Serial.println("Enter the message ID (e.g., MSP_API_VERSION) to see that message");
   Serial.println("displayed. Valid message ID's may be found in the Protocol.h file.");
 }
@@ -80,8 +80,8 @@ void loop() {
   commandFromSerial(cmd);
 
   //  Parse command and send MSP message to Serial if valid
-  if (!strcmp(cmd, "")) {
-    switch(idFromString(cmd)) {
+  if (!strcmp(cmdString, "")) {
+    switch(idFromString(cmdString)) {
         case MSP_API_VERSION:
           msp.send(MSP_API_VERSION, NULL, 0);
           break;
