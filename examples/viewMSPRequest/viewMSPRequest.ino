@@ -60,7 +60,7 @@ void printInstructions() {
   Serial.println("                 Nexgen MSP - View Request");
   Serial.println("******************************************************************\n");
   Serial.println("This example, allows you to see MSP messages in the Serial Monitor.");
-  Serial.println("Choose newLine from pulldown menu in the Serial Monitor.");
+  Serial.println("Choose newLine from the pulldown menu in the Serial Monitor.");
   Serial.println("Enter the message ID (e.g., MSP_API_VERSION) to see that message");
   Serial.println("displayed. Valid message ID's may be found in the Protocol.h file.");
 }
@@ -76,12 +76,12 @@ void setup() {
 }
 
 void loop() {
-  // load cmd array with command input from IDE Terminal
-  commandFromSerial(cmd);
+  // load the cmdString array with command input from IDE Terminal
+  commandFromSerial(cmdString);
 
   //  Parse command and send MSP message to Serial if valid
   if (!strcmp(cmdString, "")) {
-    switch(idFromString(cmdString)) {
+    switch(idLookup(cmdString)) {
         case MSP_API_VERSION:
           msp.send(MSP_API_VERSION, NULL, 0);
           break;
