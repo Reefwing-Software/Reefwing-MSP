@@ -680,15 +680,6 @@ static msp_commands_t lookupTable[] = {
 
 #define NKEYS (sizeof(lookupTable)/sizeof(msp_commands_t))
 
-int idLookup(char *key) {
-  for (int i = 0; i < NKEYS; i++) {
-      msp_commands_t sym = lookupTable[i];
-
-      if (!strcmp(sym.key, key))
-          return sym.val;
-  }
-
-  return BAD_ID;
-};
+int idLookup(char *key);
 
 #endif
