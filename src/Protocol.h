@@ -689,6 +689,6 @@ int idLookup(char *key) {
   }
 
   return BAD_ID;
-}
+};
 
 #endif
