@@ -21,7 +21,7 @@ MSP is the main communication protocol used by all Betaflight derived flight sta
 - MSP DisplayPort OSDs such as FatShark’s Shark Byte and MWOSD
 - MSP Sensors such as lidar, optical flow, gps, barometer, magnetometer and airspeed
 
-The ArduPilot implementation supports only telemetry and sensor messages. So currently ArduPilot can’t be controlled by the Betaflight configurator. 
+The ArduPilot implementation supports only telemetry and sensor messages. So currently ArduPilot can’t be controlled by the Betaflight configurator. Also, there is no proper protocol and message specification that Cleanflight, Betaflight and iNav agree upon, so you may need to tailor you payload decoding to the application.
 
 MSP requires a free serial port, and its speed defaults to 115200 baud.
 
