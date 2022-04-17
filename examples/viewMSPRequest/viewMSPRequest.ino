@@ -28,6 +28,9 @@
 #include <NexgenMSP.h>
 
 #define MAX_CMD_SIZE    32
+#define RETURN    '\r'
+#define NEW_LINE  '\n'
+#define NULL_CHAR '\0'
 
 NexgenMSP msp;
 
@@ -39,8 +42,8 @@ void commandFromSerial(char *cmdString) {
     while (Serial.available()) {
         char letter = (char)Serial.read();
 
-        if (letter == '\n') {
-            //  NL character - discard
+        if (letter == NEW_LINE || letter == RETURN) {
+            //  NL or RTN character - discard
         }
         else if (index < MAX_CMD_SIZE - 1) {
           cmdString[index] = letter;
@@ -52,7 +55,7 @@ void commandFromSerial(char *cmdString) {
     }
 
     // C strings are terminated with the null character 
-    cmdString[index] = '\0';  
+    cmdString[index] = NULL_CHAR;  
 }
 
 void printInstructions() {
@@ -60,9 +63,13 @@ void printInstructions() {
   Serial.println("                 Nexgen MSP - View Request");
   Serial.println("******************************************************************\n");
   Serial.println("This example, allows you to see MSP messages in the Serial Monitor.");
-  Serial.println("Choose newLine from the pulldown menu in the Serial Monitor.");
-  Serial.println("Enter the message ID (e.g., MSP_API_VERSION) to see that message");
-  Serial.println("displayed. Valid message ID's may be found in the Protocol.h file.");
+  Serial.println("Select 115200 baud & NewLine from the pulldown menus in the Monitor.");
+  Serial.println("Enter the message ID name (e.g., MSP_API_VERSION) and press enter");
+  Serial.println("or Send to see that message displayed. Valid message ID's may be");
+  Serial.println("found in the Protocol.h file.");
+  Serial.println("  < - denotes going to the flight controller (command and request).");
+  Serial.println("  > - denotes coming from the flight controller (response)."); 
+  Serial.println("******************************************************************\n");
 }
 
 void setup() {
@@ -80,14 +87,23 @@ void loop() {
   commandFromSerial(cmdString);
 
   //  Parse command and send MSP message to Serial if valid
-  if (!strcmp(cmdString, "")) {
+  if (cmdString[0] != NULL_CHAR) {
     switch(idLookup(cmdString)) {
         case MSP_API_VERSION:
           msp.send(MSP_API_VERSION, NULL, 0);
+          Serial.println();
+          break;
+        case MSP_IDENT:
+          Serial.print("MSP_IDENT = ");
+          msp.send(MSP_IDENT, NULL, 0);
+          Serial.println(" = $M<11001001100100");
           break;
         case BAD_ID:
-          Serial.println("Command String not recognized.");
+          Serial.print("Command String not recognized: ");
+          Serial.println(cmdString);
           break;
     }
   }
+
+  delay(500);
 }
