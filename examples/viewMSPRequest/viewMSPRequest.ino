@@ -30,9 +30,11 @@
   HOW TO USE:
 
   Upload the sketch to an Arduino board and open the Serial Monitor.
-  Enter the message ID name (e.g., MSP_API_VERSION) and press <enter>");
+  Enter the message ID name (e.g., MSP_IDENT) and press <enter>");
   or Send to see that message displayed. Valid message ID's may be
-  found in the Protocol.h file.
+  found in the Protocol.h file. Note that message ID's, size and payloads 
+  with a byte value less than 33 will be invisible in the Serial Monitor 
+  as it displays ASCII and visible characters start at 33 (decimal).
 
     < - denotes going to the flight controller (command and request).
     > - denotes coming from the flight controller (response).
@@ -78,7 +80,7 @@ void printInstructions() {
   Serial.println("******************************************************************\n");
   Serial.println("This sketch allows you to see MSP requests in the Serial Monitor.");
   Serial.println("Select 115200 baud & NewLine from the pulldown menus in the Monitor.");
-  Serial.println("Enter the message ID name (e.g., MSP_API_VERSION) and press <enter>");
+  Serial.println("Enter the message ID name (e.g., MSP_IDENT) and press <enter>");
   Serial.println("or Send to see that message displayed. Valid message ID's may be");
   Serial.println("found in the Protocol.h file.");
   Serial.println("  < - denotes going to the flight controller (command and request).");
@@ -105,23 +107,20 @@ void loop() {
     uint8_t id = idLookup(cmdString);
     
     switch(id) {
-        case MSP_API_VERSION:
-          msp.send(MSP_API_VERSION, 0, 0);
-          Serial.println();
-          break;
         case MSP_IDENT:
           Serial.print("Request MSP_IDENT = ");
-          msp.send(MSP_IDENT, 0, 0);
-          Serial.println(" = $M<11001001100100");
+          msp.send(MSP_IDENT, NULL, 0);
+          Serial.println(" = $M<0000000011001001100100");
           break;
         case BAD_ID:
           Serial.print("BAD ID:: Command String not recognized: ");
           Serial.println(cmdString);
+          Serial.println("Note that not all ID's are in the lookup table in Protocol.h")
           break;
         default:
           Serial.print(cmdString);
           Serial.print(" = ");
-          msp.send(id, 0, 0);
+          msp.send(id, NULL, 0);
           Serial.println();
           break;
     }
