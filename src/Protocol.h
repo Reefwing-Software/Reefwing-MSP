@@ -648,10 +648,10 @@ struct msp_packet_t {
   // recvSize can be NULL
   uint8_t recvMessageID;
   uint8_t recvSizeValue;
-  void payload;
+  void * payload;
   uint8_t maxSize;
   uint8_t recvSize;
-}
+};
 
 //  Betaflight additions
 
