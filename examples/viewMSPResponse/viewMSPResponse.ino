@@ -43,6 +43,7 @@
 #include <NexgenMSP.h>
 
 NexgenMSP msp;
+
 msp_api_version_t api;
 msp_ident_t identReply;
 msp_packet_t packet;
@@ -72,19 +73,28 @@ void setup() {
   identReply.multiType = QUADX;
   identReply.mspVersion = MSP_PROTOCOL_VERSION;
   identReply.capability = MSP_FEATURE_VBAT;
+
+  msp.send(MSP_IDENT, &identReply, sizeof(identReply));
 }
 
 void loop() {
   // Poll for valid messageID
   // recvSize can be NULL
-  msp.recv(&packet.recvMessageID, packet.payload, packet.maxSize, &packet.recvSize);
-
-  switch(packet.recvMessageID) {
-    case MSP_IDENT:
-      msp.send(MSP_IDENT, &identReply, sizeof(identReply));
-      break;
-    default:
-      break;
+  if (msp.recv(&packet.recvMessageID, packet.payload, packet.maxSize, &packet.recvSize)) {
+    switch(packet.recvMessageID) {
+      case MSP_IDENT:
+        msp.send(MSP_IDENT, &identReply, sizeof(identReply));
+        break;
+      default:
+        Serial.print("Unhandled MSG ID: ");
+        Serial.println(packet.recvMessageID);
+        break;
+    }
   }
+  else {
+    Serial.println("No MSP MSG Rx");
+  }
+
+  delay(500);
 
 }
