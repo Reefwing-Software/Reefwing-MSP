@@ -11,8 +11,8 @@
 
   1.0.0 Original Release.           22/02/22
 
-  This example, allows you to see MSP request in the Arduino Serial Monitor.
-  Choose "newLine" and 115200 baud from pulldown menus in the Serial Monitor.
+  This example, allows you to see an MSP request in the Arduino Serial Monitor.
+  Select "Newline" and 115200 baud from the pulldown menus in the Serial Monitor.
 
   There are three types of MSP messages that can be sent:
 
@@ -30,11 +30,13 @@
   HOW TO USE:
 
   Upload the sketch to an Arduino board and open the Serial Monitor.
-  Enter the message ID name (e.g., MSP_IDENT) and press <enter>");
+  Enter the message ID name (e.g., MSP_IDENT) and press <ENTER>
   or Send to see that message displayed. Valid message ID's may be
   found in the Protocol.h file. Note that message ID's, size and payloads 
   with a byte value less than 33 will be invisible in the Serial Monitor 
   as it displays ASCII and visible characters start at 33 (decimal).
+
+  The third byte of the message after M$ will be:
 
     < - denotes going to the flight controller (command and request).
     > - denotes coming from the flight controller (response).
@@ -79,7 +81,7 @@ void printInstructions() {
   Serial.println("                 Nexgen MSP - View Request");
   Serial.println("******************************************************************\n");
   Serial.println("This sketch allows you to see MSP requests in the Serial Monitor.");
-  Serial.println("Select 115200 baud & NewLine from the pulldown menus in the Monitor.");
+  Serial.println("Select 115200 baud & NewLine from the pulldown menus in Monitor.");
   Serial.println("Enter the message ID name (e.g., MSP_IDENT) and press <enter>");
   Serial.println("or Send to see that message displayed. Valid message ID's may be");
   Serial.println("found in the Protocol.h file.");
@@ -115,7 +117,7 @@ void loop() {
         case BAD_ID:
           Serial.print("BAD ID:: Command String not recognized: ");
           Serial.println(cmdString);
-          Serial.println("Note that not all ID's are in the lookup table in Protocol.h")
+          Serial.println("Note that not all ID's are in the lookup table in Protocol.h");
           break;
         default:
           Serial.print(cmdString);

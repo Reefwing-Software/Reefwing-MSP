@@ -14,6 +14,8 @@
            ref: https://github.com/xdu-aero-association/MultiWii_2_4/blob/master/MultiWii/Protocol.cpp
          - Arduino library for MSP by Fabrizio Di Vittorio
            ref: https://github.com/fdivitto/MSP
+         - Version 1.44 of the Betaflight MSP Protocol
+           ref: https://github.com/betaflight/betaflight/tree/master/src/main/msp
 
 ******************************************************************/
 

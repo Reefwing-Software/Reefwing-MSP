@@ -14,6 +14,8 @@
            ref: https://github.com/xdu-aero-association/MultiWii_2_4/blob/master/MultiWii/Protocol.cpp
          - Arduino library for MSP by Fabrizio Di Vittorio
            ref: https://github.com/fdivitto/MSP
+         - Version 1.44 of the Betaflight MSP Protocol
+           ref: https://github.com/betaflight/betaflight/tree/master/src/main/msp
 
 ******************************************************************/
 
@@ -244,11 +246,42 @@
 #define MSP_SENSOR_ALIGN_CW180_DEG_FLIP 7
 #define MSP_SENSOR_ALIGN_CW270_DEG_FLIP 8
 
+//  multitype ID's - used in MultiWiiConf
+#define TRI            1 
+#define QUADP          2 
+#define QUADX          3 
+#define BI             4 
+#define GIMBAL         5 
+#define Y6             6 
+#define HEX6           7 
+#define FLYING_WING    8 
+#define Y4             9 
+#define HEX6X          10 
+#define OCTOX8         11 
+#define OCTOFLATX      12 
+#define OCTOFLATP      13 
+#define AIRPLANE       14 
+#define HELI_120_CCPM  15 
+#define HELI_90_DEG    16 
+#define VTAIL4         17 
+#define HEX6H          18 
+#define PPM_TO_SERVO   19 
+#define DUALCOPTER     20 
+#define SINGLECOPTER   21 
+
 /******************************************************************
  *
  * MSP Type Structures - 
  * 
  ******************************************************************/
+
+// MSP_IDENT reply
+struct msp_ident_t {
+  uint8_t multiWiiVersion;
+  uint8_t multiType;
+  uint8_t mspVersion;
+  uint32_t capability;
+} __attribute__ ((packed));
 
 // MSP_API_VERSION reply
 struct msp_api_version_t {
