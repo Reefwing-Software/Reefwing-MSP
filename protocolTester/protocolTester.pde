@@ -23,6 +23,7 @@
  
  import processing.serial.*;
  import controlP5.*;
+ import java.util.*;  //  Required for List type
  
  /******************************************************************
  CONSTANTS - COLOUR PALETTE
@@ -58,6 +59,8 @@ final int BLACK = 0;
 final int WHITE = 255;
 final int X_AXIS = 1;
 final int Y_AXIS = 2;
+final int HEX_DUMP_ROWS = 8;
+final int HEX_DUMP_COLS = 16;
 
 /******************************************************************
  CONTROL P5 OBJECTS
@@ -76,7 +79,10 @@ String portName = null;
 ScrollableList serialPortsList;
 Textarea consoleText;
 String serialString = null;
-PFont bold, smallBold, regular;
+PFont bold, smallBold, regular, fixedWidthBold;
+int hexRow = 0, hexCol = 0, byteCtr = 0, baseBytes = 0;
+int[][] hexDump = new int[HEX_DUMP_ROWS][HEX_DUMP_COLS];
+char[][] asciiDump = new char[HEX_DUMP_ROWS][HEX_DUMP_COLS];
 
 /******************************************************************
  SETUP
@@ -99,9 +105,20 @@ void setup()
   smallBold = createFont("Arial-BoldMT", 14);
   regular = createFont("Lucida Sans Regular", 14);
   ControlFont cf1 = new ControlFont(createFont("Arial", 16));
+  fixedWidthBold = createFont("CourierNewPS-BoldMT", 14);
 
   cp5mainMenu.setFont(cf1);
   cp5console.setFont(cf1);
+  
+  /******************************************************************
+   HEX DUMP
+   ******************************************************************/
+  
+  for (int i = 0; i < HEX_DUMP_ROWS; i++) 
+    for (int j = 0; j < HEX_DUMP_COLS; j++) {
+      hexDump[i][j] = 0;
+      asciiDump[i][j] = '.';
+    }
   
   /******************************************************************
    CP5 - Create Console
@@ -267,13 +284,52 @@ void drawFrameRate(int x, int y) {
   text(int(frameRate) + " fps", x+28, y+35);
 }
 
+void drawHexDump(int x, int y) {
+  String rowHex = "", rowAscii = "";
+  
+  for (int i = 0; i < HEX_DUMP_ROWS; i++) {
+    for (int j = 0; j < HEX_DUMP_COLS; j++) {
+      String hexValue = String.format("%1$02X", hexDump[i][j]);
+      
+      rowHex = rowHex + " " + hexValue;
+      rowAscii = rowAscii + " " + asciiDump[i][j];
+      
+      if (j == 7) {
+        rowHex = rowHex + "   ";
+        rowAscii = rowAscii + "   ";
+      }
+    }
+    
+    //  Highlight row being written to
+    if (hexRow == i) {
+      fill(cp5cyan);
+      rect(x-15, y-10+i*20, 10, 10);
+    }
+    
+    fill(cp5grey);
+    textFont(fixedWidthBold);
+    textSize(14); 
+    text(String.format("%1$04X", byteCtr), x,  y+i*20);
+    fill(WHITE);
+    text(rowHex, x+40, y+i*20);
+    textSize(12);
+    text(rowAscii, x+470, y+i*20);
+    
+    rowHex = "";
+    rowAscii = "";
+    byteCtr += 128;
+  }
+  byteCtr = baseBytes;
+}
+
 void draw() 
 {
   background(BLACK);
   lights();
 
   drawBackground(); 
-  drawFrameRate(543, 640);
+  drawHexDump(40, 520);
+  drawFrameRate(900, 700);
   
   textFont(bold);
   textSize(12);
@@ -285,10 +341,96 @@ void draw()
  Handle Serial Events
  ******************************************************************/
  
- 
- /******************************************************************
- Handle Control Events - Serial
- ******************************************************************/
+ void serialEvent(Serial s) {
+  List<Character> payload;
+  int c;
+  
+  try {
+    while (s.available() > 0) {
+      c = (s.read());
+      String hexValue = String.format("%1$02X", c);
+      char ascii = (char)c;
+      
+      switch(c) {
+       case 0: 
+         ascii = '0'; // NULL
+         break;
+       default:
+         if (c < 32 || c > 126) //  Non-printable char
+           ascii = '.';
+      }
+      
+      hexDump[hexRow][hexCol] = c;
+      asciiDump[hexRow][hexCol] = ascii;
+      hexCol++;
+      
+      if (hexCol > HEX_DUMP_COLS - 1) {
+        hexCol = 0;
+        hexRow++;
+        if (hexRow > HEX_DUMP_ROWS - 1) {
+          hexRow = 0;
+          baseBytes += 128;
+        }
+      }
+
+      if (c_state == IDLE) {
+        c_state = (c=='$') ? HEADER_START : IDLE;
+      } else if (c_state == HEADER_START) {
+        c_state = (c=='M') ? HEADER_M : IDLE;
+      } else if (c_state == HEADER_M) {
+        if (c == '>') {
+          c_state = HEADER_ARROW;
+        } else if (c == '!') {
+          c_state = HEADER_ERR;
+        } else {
+          c_state = IDLE;
+        }
+      } else if (c_state == HEADER_ARROW || c_state == HEADER_ERR) {
+        /* is this an error message? */
+        err_rcvd = (c_state == HEADER_ERR);        /* now we are expecting the payload size */
+        dataSize = (c&0xFF);
+        /* reset index variables */
+        p = 0;
+        offset = 0;
+        checksum = 0;
+        checksum ^= (c&0xFF);
+        /* the command is to follow */
+        c_state = HEADER_SIZE;
+      } else if (c_state == HEADER_SIZE) {
+        cmd = (byte)(c&0xFF);
+        checksum ^= (c&0xFF);
+        c_state = HEADER_CMD;
+      } else if (c_state == HEADER_CMD && offset < dataSize) {
+          checksum ^= (c&0xFF);
+          inBuf[offset++] = (byte)(c&0xFF);
+      } else if (c_state == HEADER_CMD && offset >= dataSize) {
+        /* compare calculated and transferred checksum */
+        if ((checksum&0xFF) == (c&0xFF)) {
+          if (err_rcvd) {
+            //System.err.println("Copter did not understand request type "+c);
+          } else {
+            /* we got a valid response packet, evaluate it */
+            evaluateCommand(cmd, (int)dataSize);
+          }
+        } else {
+          System.out.println("invalid checksum for command "+((int)(cmd&0xFF))+": "+(checksum&0xFF)+" expected, got "+(int)(c&0xFF));
+          System.out.print("<"+(cmd&0xFF)+" "+(dataSize&0xFF)+"> {");
+          for (int i=0; i<dataSize; i++) {
+            if (i!=0) { System.err.print(' '); }
+            System.out.print((inBuf[i] & 0xFF));
+          }
+          System.out.println("} ["+c+"]");
+          System.out.println(new String(inBuf, 0, dataSize));
+        }
+        c_state = IDLE;
+      }
+    }
+  }
+  catch(Exception e) {
+    logConsole("Error reading serial port " + portName);
+    //  e.printStackTrace();
+  }
+}
  
  public void disconnectSerial(int n) {
   if (serialPort != null) {
@@ -341,6 +483,8 @@ public void serialPorts(int n) {
     logConsole("Connected to Serial Port: " + portName);
     logConsole("========================================\n");
     discButton.setColorBackground(cp5red);
+    sendRequestMSP(requestMSP(MSP_IDENT));
+    logConsole("MSP_IDENT Request Sent");
   }
   catch(Exception e) {
     logConsole("Error opening serial port " + portName);
