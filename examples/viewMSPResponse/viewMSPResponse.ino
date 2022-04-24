@@ -48,33 +48,20 @@ msp_api_version_t api;
 msp_ident_t identReply;
 msp_packet_t packet;
 
-void printInstructions() {
-  Serial.println("******************************************************************");
-  Serial.println("                 Nexgen MSP - View Response");
-  Serial.println("******************************************************************\n");
-  Serial.println("In this example, the Serial Monitor is simulating the Configurator");
-  Serial.println("and our sketch is emulating the flight controller. Select one of the");
-  Serial.println("pre-configured MSP commands to send to the Arduino Board by copying");
-  Serial.println("a message below starting with $M, and pasting it into the command box");
-  Serial.println("then press <RETURN> or Send.\n");
-  Serial.println("1. MSP_IDENT Request: $M<0000000011001001100100");
-}
-
 void setup() {
   //  Start Serial and wait for connection
   Serial.begin(115200);
   while (!Serial);
 
-  //  Allocate stream and timeout (default timeout = 0, i.e., no timeout)
+  //  Allocate stream and timeout (default timeout = 500)
   msp.begin(Serial);
-  printInstructions();
 
   identReply.multiWiiVersion = 0;
   identReply.multiType = QUADX;
   identReply.mspVersion = MSP_PROTOCOL_VERSION;
   identReply.capability = MSP_FEATURE_VBAT;
 
-  msp.send(MSP_IDENT, &identReply, sizeof(identReply));
+  msp.response(MSP_IDENT, &identReply, sizeof(identReply));
 }
 
 void loop() {
@@ -83,7 +70,7 @@ void loop() {
   if (msp.recv(&packet.recvMessageID, packet.payload, packet.maxSize, &packet.recvSize)) {
     switch(packet.recvMessageID) {
       case MSP_IDENT:
-        msp.send(MSP_IDENT, &identReply, sizeof(identReply));
+        msp.response(MSP_IDENT, &identReply, sizeof(identReply));
         break;
       default:
         Serial.print("Unhandled MSG ID: ");
@@ -92,7 +79,7 @@ void loop() {
     }
   }
   else {
-    Serial.println("No MSP MSG Rx");
+    //  Serial.println("No MSP MSG Rx");
   }
 
   delay(500);

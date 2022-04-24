@@ -53,6 +53,24 @@ void NexgenMSP::send(uint8_t messageID, void * payload, uint8_t size) {
   _stream->write(checksum);
 }
 
+void NexgenMSP::response(uint8_t messageID, void * payload, uint8_t size) {
+  _stream->write('$');
+  _stream->write('M');
+  _stream->write('>');
+  _stream->write(size);
+  _stream->write(messageID);
+
+  uint8_t checksum = size ^ messageID;
+  uint8_t * payloadPtr = (uint8_t*)payload;
+
+  for (uint8_t i = 0; i < size; ++i) {
+    uint8_t b = *(payloadPtr++);
+    checksum ^= b;
+    _stream->write(b);
+  }
+  _stream->write(checksum);
+}
+
 // timeout in milliseconds
 bool NexgenMSP::recv(uint8_t * messageID, void * payload, uint8_t maxSize, uint8_t * recvSize) {
   uint32_t t0 = millis();

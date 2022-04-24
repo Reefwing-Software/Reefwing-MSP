@@ -76,10 +76,11 @@ final int HEX_DUMP_COLS = 16;
 
 Serial serialPort = null;
 String portName = null;
-ScrollableList serialPortsList;
+ScrollableList serialPortsList, mspRequestList;
 Textarea consoleText;
 String serialString = null;
 PFont bold, smallBold, regular, fixedWidthBold;
+CommandID mspRequest = CommandID.MSP_IDENT;
 int hexRow = 0, hexCol = 0, byteCtr = 0, baseBytes = 0;
 int[][] hexDump = new int[HEX_DUMP_ROWS][HEX_DUMP_COLS];
 char[][] asciiDump = new char[HEX_DUMP_ROWS][HEX_DUMP_COLS];
@@ -164,6 +165,15 @@ void setup()
     .setColorBackground(darkGrey)
     .setBroadcast(true)
     ;
+    
+  cp5console.addButton("sendRequest")
+    .setBroadcast(false)
+    .setValue(0)
+    .setPosition(330, 145)
+    .setSize(90, 30)
+    .setCaptionLabel("Send")
+    .setBroadcast(true)
+    ;
 
   cp5console.addTextfield("console")
     .setSize(width - 430, 35)
@@ -198,6 +208,22 @@ void setup()
 
   for (int i = 0; i < portNames.length; i++) 
     serialPortsList.addItem(portNames[i], i);
+    
+  String[] requestNames = { "MSP_IDENT", "MSP_STATUS", "MSP_RAW_IMU" };
+
+  mspRequestList = cp5console.addScrollableList("mspRequests")
+    .setCaptionLabel("MSP Requests")
+    .setPosition(20, 250)
+    .setColorValue(nexgenGold)
+    .setColorBackground(darkGrey)
+    .setBarHeight(30)
+    .setWidth(320)
+    .setItemHeight(30)
+    .setOpen(false)
+    ;
+
+  for (int i = 0; i < requestNames.length; i++) 
+    mspRequestList.addItem(requestNames[i], i);
     
   /******************************************************************
    CP5 - SETUP DONE
@@ -284,6 +310,47 @@ void drawFrameRate(int x, int y) {
   text(int(frameRate) + " fps", x+28, y+35);
 }
 
+public void drawCommand(int x, int y) {
+  stroke(WHITE);
+  fill(cp5blue);
+  rect(x, y, 40, 40);
+  rect(x+40, y, 40, 40);
+  rect(x+80, y, 40, 40);
+  
+  fill(nexgenGold);
+  rect(x+120, y, 40, 40);
+  rect(x+160, y, 40, 40);
+  
+  fill(cp5grey);
+  rect(x+200, y, 40, 40);
+  
+  textFont(fixedWidthBold);
+  textSize(14); 
+  text("header", x+35, y-10);
+  text("size", x+122, y-10);
+  text("type", x+163, y-10);
+  text("crc", x+207, y-10);
+  
+  text("0x24", x+2, y+55);
+  text("0x4D", x+43, y+55);
+  text("0x3C", x+83, y+55);
+  text("0x00", x+123, y+55);
+  text("0x" + String.format("%1$02X", mspRequest.code), x+163, y+55);
+  text("0x" + String.format("%1$02X", mspRequest.code), x+203, y+55);
+  
+  fill(WHITE);
+  textFont(bold);
+  textSize(24);
+  text("$", x+13, y+28);
+  text("M", x+50, y+28);
+  text("<", x+92, y+28);
+  
+  fill(BLACK);
+  text("\\0", x+130, y+28);
+  text(Character.toString((char)mspRequest.code), x+172, y+28);
+  text(Character.toString((char)mspRequest.code), x+212, y+28);
+}
+
 void drawHexDump(int x, int y) {
   String rowHex = "", rowAscii = "";
   
@@ -328,6 +395,7 @@ void draw()
   lights();
 
   drawBackground(); 
+  drawCommand(20, 140);
   drawHexDump(40, 520);
   drawFrameRate(900, 700);
   
@@ -375,11 +443,16 @@ void draw()
 
       if (c_state == IDLE) {
         c_state = (c=='$') ? HEADER_START : IDLE;
-      } else if (c_state == HEADER_START) {
+        logConsole("MSP Header $ - state: " + c_state);
+      } 
+      else if (c_state == HEADER_START) {
         c_state = (c=='M') ? HEADER_M : IDLE;
-      } else if (c_state == HEADER_M) {
+        logConsole("MSP Header M - state: " + c_state);
+      } 
+      else if (c_state == HEADER_M) {
         if (c == '>') {
           c_state = HEADER_ARROW;
+          logConsole("MSP Header > - state: " + c_state);
         } else if (c == '!') {
           c_state = HEADER_ERR;
         } else {
@@ -483,11 +556,32 @@ public void serialPorts(int n) {
     logConsole("Connected to Serial Port: " + portName);
     logConsole("========================================\n");
     discButton.setColorBackground(cp5red);
-    sendRequestMSP(requestMSP(MSP_IDENT));
-    logConsole("MSP_IDENT Request Sent");
   }
   catch(Exception e) {
     logConsole("Error opening serial port " + portName);
     //e.printStackTrace();
+  }
+}
+
+/******************************************************************
+ Handle CP5 Events
+ ******************************************************************/
+
+public void mspRequests(int n) {
+  int code = n + 100;
+  
+  mspRequest = CommandID.valueOfCode(code);
+}
+
+public void sendRequest(int n) {
+  String requestType = Character.toString((char)mspRequest.code);
+  String crc = requestType;
+  
+  if (serialPort != null) {
+    sendRequestMSP(requestMSP(mspRequest.code));
+    logConsole("$M<\\0" + requestType + crc + " MSP Request Sent");
+  }
+  else {
+    logConsole("Unable to send MSP message. No serial connection.");
   }
 }
