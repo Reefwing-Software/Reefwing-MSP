@@ -443,22 +443,22 @@ void draw()
 
       if (c_state == IDLE) {
         c_state = (c=='$') ? HEADER_START : IDLE;
-        logConsole("MSP Header $ - state: " + c_state);
       } 
       else if (c_state == HEADER_START) {
         c_state = (c=='M') ? HEADER_M : IDLE;
-        logConsole("MSP Header M - state: " + c_state);
       } 
       else if (c_state == HEADER_M) {
         if (c == '>') {
           c_state = HEADER_ARROW;
-          logConsole("MSP Header > - state: " + c_state);
-        } else if (c == '!') {
+        } 
+        else if (c == '!') {
           c_state = HEADER_ERR;
-        } else {
+        } 
+        else {
           c_state = IDLE;
         }
-      } else if (c_state == HEADER_ARROW || c_state == HEADER_ERR) {
+      } 
+      else if (c_state == HEADER_ARROW || c_state == HEADER_ERR) {
         /* is this an error message? */
         err_rcvd = (c_state == HEADER_ERR);        /* now we are expecting the payload size */
         dataSize = (c&0xFF);

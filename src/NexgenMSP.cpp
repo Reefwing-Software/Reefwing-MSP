@@ -85,7 +85,7 @@ bool NexgenMSP::recv(uint8_t * messageID, void * payload, uint8_t maxSize, uint8
     _stream->readBytes((char*)header, 3);
 
     // check header
-    if (header[0] == '$' && header[1] == 'M' && header[2] == '>') {
+    if (header[0] == '$' && header[1] == 'M' && header[2] == '<') {
       // header ok, read payload size
       *recvSize = _stream->read();
 
