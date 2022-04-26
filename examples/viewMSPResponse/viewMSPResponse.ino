@@ -61,8 +61,6 @@ void setup() {
   identReply.mspVersion = MSP_PROTOCOL_VERSION;
   identReply.capability = MSP_FEATURE_VBAT;
 
-  error.msg = "Unhandled request";
-
   msp.response(MSP_IDENT, &identReply, sizeof(identReply));
 }
 
