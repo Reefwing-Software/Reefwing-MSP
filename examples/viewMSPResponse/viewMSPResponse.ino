@@ -61,6 +61,8 @@ void setup() {
   identReply.mspVersion = MSP_PROTOCOL_VERSION;
   identReply.capability = MSP_FEATURE_VBAT;
 
+  error.msg = "Unhandled request";
+
   msp.response(MSP_IDENT, &identReply, sizeof(identReply));
 }
 
@@ -73,8 +75,7 @@ void loop() {
         msp.response(MSP_IDENT, &identReply, sizeof(identReply));
         break;
       default:
-        Serial.print("Unhandled MSG ID: ");
-        Serial.println(packet.recvMessageID);
+        msp.error(packet.recvMessageID, NULL, 0);
         break;
     }
   }

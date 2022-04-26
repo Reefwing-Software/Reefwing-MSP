@@ -88,6 +88,36 @@ public enum CommandID {
   
 };
 
+/******************************************************************
+ Alias for multiTypes (MultiWiiConf)
+ ******************************************************************/
+
+final int TRI           =1;
+final int QUADP         =2;
+final int QUADX         =3;
+final int BI            =4;
+final int GIMBAL        =5;
+final int Y6            =6;
+final int HEX6          =7;
+final int FLYING_WING   =8;
+final int Y4            =9;
+final int HEX6X         =10;
+final int OCTOX8        =11;
+final int OCTOFLATX     =12;
+final int OCTOFLATP     =13;
+final int AIRPLANE      =14;
+final int HELI_120_CCPM =15;
+final int HELI_90_DEG   =16;
+final int VTAIL4        =17;
+final int HEX6H         =18;
+final int PPM_TO_SERVO  =19;
+final int DUALCOPTER    =20;
+final int SINGLECOPTER  =21;
+
+/******************************************************************
+ Serial Message State Machine & Globals (MultiWiiConf)
+ ******************************************************************/
+
 public static final int
   IDLE = 0,
   HEADER_START = 1,
@@ -111,10 +141,10 @@ int p;
 int read32() {return (inBuf[p++]&0xff) + ((inBuf[p++]&0xff)<<8) + ((inBuf[p++]&0xff)<<16) + ((inBuf[p++]&0xff)<<24); }
 int read16() {return (inBuf[p++]&0xff) + ((inBuf[p++])<<8); }
 int read8()  {return  inBuf[p++]&0xff;}
-
-int mode;
-boolean toggleRead = false,toggleReset = false,toggleCalibAcc = false,toggleCalibMag = false,toggleWrite = false,
-        toggleRXbind = false,toggleSetSetting = false,toggleVbat=true,toggleMotor=false,motorcheck=true;
+        
+/******************************************************************
+ MSP Protocol Functions (MultiWiiConf)
+ ******************************************************************/
 
 //send msp without payload
 private List<Byte> requestMSP(int msp) {
@@ -167,15 +197,36 @@ void sendRequestMSP(List<Byte> msp) {
   serialPort.write(arr); // send the complete byte sequence in one go
 }
 
+/******************************************************************
+ Evaluate MSP Responses (MultiWiiConf)
+ ******************************************************************/
+
 public void evaluateCommand(byte cmd, int dataSize) {
   int i;
   int icmd = (int)(cmd&0xFF);
   
   switch(icmd) {
     case MSP_IDENT:
+      version = read8();
+      multiType = read8();
+      read8(); // MSP version - not used
+      multiCapability = read32();// capability
       logConsole("MSP_IDENT response received");
+      logConsole("Version: " + version + " multitype: " + multiType + " multicapability: " + multiCapability);
+      break;
+    case MSP_STATUS:
+      cycleTime = read16();
+      i2cError = read16();
+      present = read16();
+      mode = read32();  //  a bit variable to indicate which BOX are active, the bit position depends on the BOX which are configured
+      configSetting = read8();
+      break;
+    case MSP_RAW_IMU:
+      ax = read16(); ay = read16(); az = read16();
+      gx = read16(); gy = read16(); gz = read16();
+      mx = read16(); my = read16(); mz = read16();
       break;
     default:
-      logConsole("Unknown MSP MSG Response: " + icmd);
+      logConsole("Unhandled MSP MSG Response: " + icmd);
   }
 }

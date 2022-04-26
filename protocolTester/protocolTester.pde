@@ -86,6 +86,22 @@ int[][] hexDump = new int[HEX_DUMP_ROWS][HEX_DUMP_COLS];
 char[][] asciiDump = new char[HEX_DUMP_ROWS][HEX_DUMP_COLS];
 
 /******************************************************************
+ MSP PAYLOAD VARIABLES
+ ******************************************************************/
+ 
+ //  MSP_IDENT:
+ 
+ int version;
+ int multiType;  // 1 for tricopter, 2 for quad+, 3 for quadX, ...
+ int multiCapability = 0; // Bitflags stating what capabilities are/are not present in the compiled code.
+ 
+ //  MSP_STATUS:
+ int cycleTime, i2cError, mode, present = 0, configSetting;
+ 
+ //  MSP_RAW_IMU:
+ float gx, gy, gz, ax, ay, az, mx, my, mz;
+
+/******************************************************************
  SETUP
  ******************************************************************/
 
@@ -209,7 +225,13 @@ void setup()
   for (int i = 0; i < portNames.length; i++) 
     serialPortsList.addItem(portNames[i], i);
     
-  String[] requestNames = { "MSP_IDENT", "MSP_STATUS", "MSP_RAW_IMU" };
+  String[] requestNames = { "MSP_IDENT", "MSP_STATUS", "MSP_RAW_IMU",  
+                            "MSP_SERVO", "MSP_MOTOR", "MSP_RC",
+                            "MSP_RAW_GPS", "MSP_COMP_GPS", "MSP_ATTITUDE",
+                            "MSP_ALTITUDE", "MSP_ANALOG", "MSP_RC_TUNING",
+                            "MSP_PID", "MSP_BOX", "MSP_MISC", "MSP_MOTOR_PINS",
+                            "MSP_BOXNAMES", "MSP_PIDNAMES"
+                          };
 
   mspRequestList = cp5console.addScrollableList("mspRequests")
     .setCaptionLabel("MSP Requests")
@@ -469,23 +491,29 @@ void draw()
         checksum ^= (c&0xFF);
         /* the command is to follow */
         c_state = HEADER_SIZE;
-      } else if (c_state == HEADER_SIZE) {
+      } 
+      else if (c_state == HEADER_SIZE) {
         cmd = (byte)(c&0xFF);
         checksum ^= (c&0xFF);
         c_state = HEADER_CMD;
-      } else if (c_state == HEADER_CMD && offset < dataSize) {
+      } 
+      else if (c_state == HEADER_CMD && offset < dataSize) {
           checksum ^= (c&0xFF);
           inBuf[offset++] = (byte)(c&0xFF);
-      } else if (c_state == HEADER_CMD && offset >= dataSize) {
+      } 
+      else if (c_state == HEADER_CMD && offset >= dataSize) {
         /* compare calculated and transferred checksum */
         if ((checksum&0xFF) == (c&0xFF)) {
           if (err_rcvd) {
+            logConsole("Drone did not understand request type " + c);
             //System.err.println("Copter did not understand request type "+c);
-          } else {
+          } 
+          else {
             /* we got a valid response packet, evaluate it */
             evaluateCommand(cmd, (int)dataSize);
           }
-        } else {
+        } 
+        else {
           System.out.println("invalid checksum for command "+((int)(cmd&0xFF))+": "+(checksum&0xFF)+" expected, got "+(int)(c&0xFF));
           System.out.print("<"+(cmd&0xFF)+" "+(dataSize&0xFF)+"> {");
           for (int i=0; i<dataSize; i++) {

@@ -37,6 +37,7 @@ class NexgenMSP {
   public:
     void begin(Stream & stream, uint32_t timeout = 500);
     void send(uint8_t messageID, void * payload, uint8_t size);
+    void error(uint8_t messageID, void * payload, uint8_t size);
     void response(uint8_t messageID, void * payload, uint8_t size);
     bool recv(uint8_t * messageID, void * payload, uint8_t maxSize, uint8_t * recvSize);    
     bool waitFor(uint8_t messageID, void * payload, uint8_t maxSize, uint8_t * recvSize = NULL);

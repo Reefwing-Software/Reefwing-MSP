@@ -275,6 +275,12 @@
  * 
  ******************************************************************/
 
+// MSP_ERROR reply
+struct msp_error_t {
+  uint8_t cmdID;
+  char msg[32];
+} __attribute__ ((packed));
+
 // MSP_IDENT reply
 struct msp_ident_t {
   uint8_t multiWiiVersion;
