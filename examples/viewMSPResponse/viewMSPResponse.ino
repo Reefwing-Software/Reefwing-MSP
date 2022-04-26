@@ -77,10 +77,5 @@ void loop() {
         break;
     }
   }
-  else {
-    //  Serial.println("No MSP MSG Rx");
-  }
-
-  delay(500);
 
 }

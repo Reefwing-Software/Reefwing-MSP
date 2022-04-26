@@ -112,7 +112,7 @@ void loop() {
         case MSP_IDENT:
           Serial.print("Request MSP_IDENT = ");
           msp.send(MSP_IDENT, NULL, 0);
-          Serial.println(" = $M<0000000011001001100100");
+          Serial.println(" = $M<\\0dd");
           break;
         case BAD_ID:
           Serial.print("BAD ID:: Command String not recognized: ");
