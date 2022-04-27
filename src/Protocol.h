@@ -114,7 +114,7 @@
  ******************************************************************/
 
 //  unique flight controller IDENT - in accordance with Betaflight MSP guidelines
-#define NEXGEN_IDENTIFIER "NXGN";
+#define NEXGEN_IDENTIFIER "NXGN"
 
 // flags for msp_status_ex_t.sensor and msp_status_t.sensor
 #define MSP_STATUS_SENSOR_ACC    1
