@@ -11,32 +11,24 @@
 
   1.0.0 Original Release.           22/02/22
 
-  This example, allows you to see an MSP response in the Arduino Serial Monitor.
-  Select "Newline" and 115200 baud from the pulldown menus in the Serial Monitor.
+  How to Use:
 
-  There are three types of MSP messages that can be sent:
+  Upload the mspResponse.ino sketch to an Arduino board and run the 
+  Protocol Tester on your PC. In this example, the Protocol Tester (PT) 
+  is simulating the Configurator and our sketch is emulating the flight 
+  controller. 
 
-   - Command: a message sent to the flight controller which has some 
-     information to be sent.
-   - Request: a message sent to the flight controller asking for some 
-     information to be returned.
-   - Response: a message sent by the flight controller with information 
-     responding to a request.
+  In the PT, select the serial port that your Arduino is connected to 
+  and click on the CONNECT button.
 
-  This sketch demonstrates MSP responses. These messages would
-  usually be sent by the Flight Controller or equivalent. The viewMSPRequest.ino
-  sketch demonstrates requests and commands from the Configurator.
+  Select a request from the drop down (e.g., MSP_STATUS) and click on 
+  SEND to transmit the message to the Arduino. The message sent will 
+  be displayed in the log console as will any response or error. 
+  The response will also be displayed in the hex dump at the bottom 
+  of the PT screen.
 
-  HOW TO USE:
-
-  Upload the sketch to an Arduino board and open the Serial Monitor.
-  In this example, the Serial Monitor is simulating the Configurator
-  and our sketch is emulating the flight controller. Select one of the
-  pre-configured MSP commands to send to the Arduino Board by copying
-  a message below starting with $M, and pasting it into the command box
-  then press <RETURN> or Send.
-
-  1. MSP_IDENT Request: $M<0000000011001001100100
+  In order for there to be a response, other than an error, it has 
+  to be handled in the mspResponse sketch.
 
 ******************************************************************/
 
@@ -47,6 +39,7 @@ NexgenMSP msp;
 msp_api_version_t api;
 msp_ident_t identReply;
 msp_packet_t packet;
+msp_fc_variant_t variant;
 
 void setup() {
   //  Start Serial and wait for connection
@@ -56,12 +49,14 @@ void setup() {
   //  Allocate stream and timeout (default timeout = 500)
   msp.begin(Serial);
 
+  //  Original MSP message response
   identReply.multiWiiVersion = 0;
   identReply.multiType = QUADX;
   identReply.mspVersion = MSP_PROTOCOL_VERSION;
   identReply.capability = MSP_FEATURE_VBAT;
 
-  msp.response(MSP_IDENT, &identReply, sizeof(identReply));
+  //  Betaflight message variant
+  variant.flightControlIdentifier = NEXGEN_IDENTIFIER;
 }
 
 void loop() {
@@ -72,6 +67,9 @@ void loop() {
       case MSP_IDENT:
         msp.response(MSP_IDENT, &identReply, sizeof(identReply));
         break;
+      case MSP_FC_VARIANT:
+        msp.response(MSP_FC_VARIANT, &variant, sizeof(variant));
+        break; 
       default:
         msp.error(packet.recvMessageID, NULL, 0);
         break;

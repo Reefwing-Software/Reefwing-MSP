@@ -225,7 +225,7 @@ void setup()
   for (int i = 0; i < portNames.length; i++) 
     serialPortsList.addItem(portNames[i], i);
     
-  String[] requestNames = { "MSP_IDENT", "MSP_STATUS", "MSP_RAW_IMU",  
+  String[] requestNames = { "MSP_FC_VARIANT", "MSP_IDENT", "MSP_STATUS", "MSP_RAW_IMU",  
                             "MSP_SERVO", "MSP_MOTOR", "MSP_RC",
                             "MSP_RAW_GPS", "MSP_COMP_GPS", "MSP_ATTITUDE",
                             "MSP_ALTITUDE", "MSP_ANALOG", "MSP_RC_TUNING",
@@ -596,8 +596,9 @@ public void serialPorts(int n) {
  ******************************************************************/
 
 public void mspRequests(int n) {
-  int code = n + 100;
+  int code = MSP_FC_VARIANT;  //  Betaflight specific
   
+  if (n != 0) code = n + 100;
   mspRequest = CommandID.valueOfCode(code);
 }
 

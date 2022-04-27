@@ -2,9 +2,18 @@
  Multiwii Serial Protocol
  ******************************************************************/
  
-private static final String MSP_HEADER = "$M<";
+private static final String MSP_HEADER = "$M<";  //  MSP Version 1.0
+
+// Request ID's below 100 are Betaflight specific
 
 private static final int
+  MSP_API_VERSION          =1,    
+  MSP_FC_VARIANT           =2,    
+  MSP_FC_VERSION           =3,    
+  MSP_BOARD_INFO           =4,    
+  MSP_BUILD_INFO           =5,    
+  MSP_NAME                 =10,   
+  MSP_SET_NAME             =11,   
   MSP_IDENT                =100,
   MSP_STATUS               =101,
   MSP_RAW_IMU              =102,
@@ -225,6 +234,9 @@ public void evaluateCommand(byte cmd, int dataSize) {
       ax = read16(); ay = read16(); az = read16();
       gx = read16(); gy = read16(); gz = read16();
       mx = read16(); my = read16(); mz = read16();
+      break;
+    case MSP_FC_VARIANT:
+      logConsole("MSP_IDENT response received");
       break;
     default:
       logConsole("Unhandled MSP MSG Response: " + icmd);
