@@ -56,7 +56,7 @@ void setup() {
   identReply.capability = MSP_FEATURE_VBAT;
 
   //  Betaflight message variant
-  variant.flightControlIdentifier = NEXGEN_IDENTIFIER;
+  strcpy(variant.flightControlIdentifier, NEXGEN_IDENTIFIER);
 }
 
 void loop() {

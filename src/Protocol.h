@@ -299,7 +299,7 @@ struct msp_api_version_t {
 
 // MSP_FC_VARIANT reply
 struct msp_fc_variant_t {
-  char flightControlIdentifier[8];
+  char flightControlIdentifier[5];
 } __attribute__ ((packed));
 
 
@@ -313,7 +313,7 @@ struct msp_fc_version_t {
 
 // MSP_BOARD_INFO reply
 struct msp_board_info_t {
-  char     boardIdentifier[4];
+  char     boardIdentifier[5];
   uint16_t hardwareRevision;
 } __attribute__ ((packed));
 
