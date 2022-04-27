@@ -59,6 +59,13 @@ private static final int
 ;
 
 public enum CommandID {
+  MSP_API_VERSION(1),    
+  MSP_FC_VARIANT(2),    
+  MSP_FC_VERSION(3),    
+  MSP_BOARD_INFO(4),    
+  MSP_BUILD_INFO(5),    
+  MSP_NAME(10),   
+  MSP_SET_NAME(11), 
   MSP_IDENT(100),
   MSP_STATUS(101),
   MSP_RAW_IMU(102),
@@ -213,6 +220,7 @@ void sendRequestMSP(List<Byte> msp) {
 public void evaluateCommand(byte cmd, int dataSize) {
   int i;
   int icmd = (int)(cmd&0xFF);
+  int variant;
   
   switch(icmd) {
     case MSP_IDENT:
@@ -236,7 +244,9 @@ public void evaluateCommand(byte cmd, int dataSize) {
       mx = read16(); my = read16(); mz = read16();
       break;
     case MSP_FC_VARIANT:
-      logConsole("MSP_IDENT response received");
+      logConsole("MSP_FC_VARIANT response received");
+      variant = read8();
+      logConsole("Variant = " + variant);
       break;
     default:
       logConsole("Unhandled MSP MSG Response: " + icmd);
