@@ -157,6 +157,10 @@ int p;
 int read32() {return (inBuf[p++]&0xff) + ((inBuf[p++]&0xff)<<8) + ((inBuf[p++]&0xff)<<16) + ((inBuf[p++]&0xff)<<24); }
 int read16() {return (inBuf[p++]&0xff) + ((inBuf[p++])<<8); }
 int read8()  {return  inBuf[p++]&0xff;}
+String readStr() {
+  String raw = new String(inBuf, StandardCharsets.UTF_8);
+  return raw.replaceAll("\\P{Print}", "");
+}
         
 /******************************************************************
  MSP Protocol Functions (MultiWiiConf)
@@ -220,7 +224,6 @@ void sendRequestMSP(List<Byte> msp) {
 public void evaluateCommand(byte cmd, int dataSize) {
   int i;
   int icmd = (int)(cmd&0xFF);
-  int variant;
   
   switch(icmd) {
     case MSP_IDENT:
@@ -244,8 +247,9 @@ public void evaluateCommand(byte cmd, int dataSize) {
       mx = read16(); my = read16(); mz = read16();
       break;
     case MSP_FC_VARIANT:
+      String variant = readStr();
+      
       logConsole("MSP_FC_VARIANT response received");
-      variant = read8();
       logConsole("Variant = " + variant);
       break;
     default:

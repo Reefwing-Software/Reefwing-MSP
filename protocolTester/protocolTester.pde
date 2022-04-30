@@ -24,6 +24,7 @@
  import processing.serial.*;
  import controlP5.*;
  import java.util.*;  //  Required for List type
+ import java.nio.charset.StandardCharsets;  //  For converting the serial buffer to a string
  
  /******************************************************************
  CONSTANTS - COLOUR PALETTE
@@ -598,7 +599,7 @@ public void serialPorts(int n) {
 public void mspRequests(int n) {
   int code = MSP_FC_VARIANT;  //  Betaflight specific
   
-  if (n != 0) code = n + 100;
+  if (n != 0) code = n + 99;
   mspRequest = CommandID.valueOfCode(code);
 }
 
