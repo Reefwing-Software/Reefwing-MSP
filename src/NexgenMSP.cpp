@@ -5,10 +5,11 @@
   @copyright  Please see the accompanying LICENSE file.
 
   Code:        David Such
-  Version:     1.0.0
-  Date:        22/02/22
+  Version:     1.0.3
+  Date:        02/06/22
 
   1.0.0 Original Release.           22/02/22
+  1.0.3 IMU ODR & offset bias added 02/06/22
 
   Credit - Version 2.4 of the MultiWii Protocol class.
            ref: https://github.com/xdu-aero-association/MultiWii_2_4/blob/master/MultiWii/Protocol.cpp

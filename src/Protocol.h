@@ -5,10 +5,11 @@
   @copyright  Please see the accompanying LICENSE file.
 
   Code:        David Such
-  Version:     1.0.0
-  Date:        22/02/22
+  Version:     1.0.3
+  Date:        02/06/22
 
   1.0.0 Original Release.           22/02/22
+  1.0.3 IMU ODR & offset bias added 02/06/22
 
   Credit - Version 2.4 of the MultiWii Protocol class.
            ref: https://github.com/xdu-aero-association/MultiWii_2_4/blob/master/MultiWii/Protocol.cpp
@@ -54,6 +55,21 @@
 
 #define MSP_NAME                 10   //out message          Returns user set board name - betaflight
 #define MSP_SET_NAME             11   //in message           Sets board name - betaflight
+
+/******************************************************************
+ *
+ *  NEXGEN SPECIFIC MSG IDS
+ * 
+ ******************************************************************/
+
+#define MSP_IMU_ODR              50   //out message           Returns the IMU sample rates for gyro, acc and mag
+#define MSP_IMU_BIAS             51   //out message           Returns the x,y and z bias offsets for gyro, acc and mag
+
+/******************************************************************
+ *
+ *  CLASSIC MSG IDS
+ * 
+ ******************************************************************/
 
 #define MSP_IDENT                100   //out message         multitype + multiwii version + protocol version + capability variable
 #define MSP_STATUS               101   //out message         cycletime & errors_count & sensor present & box activation & current setting number
@@ -115,6 +131,12 @@
 
 //  unique flight controller IDENT - in accordance with Betaflight MSP guidelines
 #define NEXGEN_IDENTIFIER "NXGN"
+#define MULTIWII_IDENTIFIER "MWII";
+#define BASEFLIGHT_IDENTIFIER "BAFL";
+#define BETAFLIGHT_IDENTIFIER "BTFL"
+#define CLEANFLIGHT_IDENTIFIER "CLFL"
+#define INAV_IDENTIFIER "INAV"
+#define RACEFLIGHT_IDENTIFIER "RCFL"
 
 // flags for msp_status_ex_t.sensor and msp_status_t.sensor
 #define MSP_STATUS_SENSOR_ACC    1
@@ -275,12 +297,6 @@
  * 
  ******************************************************************/
 
-// MSP_ERROR reply
-struct msp_error_t {
-  uint8_t cmdID;
-  char msg[32];
-} __attribute__ ((packed));
-
 // MSP_IDENT reply
 struct msp_ident_t {
   uint8_t multiWiiVersion;
@@ -353,7 +369,7 @@ struct msp_status_t {
   uint16_t i2cErrorCounter;
   uint16_t sensor;                    // MSP_STATUS_SENSOR_...
   uint32_t flightModeFlags;           // see getActiveModes()
-  uint8_t  configProfileIndex;
+  uint8_t  configProfileIndex;        // Connection Mode
 } __attribute__ ((packed));
 
 
@@ -682,6 +698,22 @@ struct msp_set_wp_t {
   uint8_t flag;     // 0xa5 = last, otherwise set to 0
 } __attribute__ ((packed));
 
+//  Nexgen additions
+
+// MSP_IMU_ODR reply
+struct msp_imu_odr_t {
+  uint8_t gyro;
+  uint8_t acc;
+  uint8_t mag;
+} __attribute__ ((packed));
+
+// MSP_IMU_BIAS reply
+struct msp_imu_bias_t {
+  int16_t acc[3];  // x, y, z
+  int16_t gyro[3]; // x, y, z
+  int16_t mag[3];  // x, y, z  
+} __attribute__ ((packed));
+
 //  MSP Received Packet contents
 struct msp_packet_t {
   // recvSize can be NULL
@@ -691,6 +723,25 @@ struct msp_packet_t {
   uint8_t maxSize;
   uint8_t recvSize;
 };
+
+// MSP_DEBUG Packet contents
+struct msp_debug_t {
+  uint16_t debug1;
+  uint16_t debug2;
+  uint16_t debug3;
+  uint16_t debug4;
+} __attribute__ ((packed));
+
+// MSP_DEBUGMSG Packet contents
+struct msp_debug_msg_t {
+  char msg[32];
+} __attribute__ ((packed));
+
+// MSP_ERROR reply
+struct msp_error_t {
+  uint8_t cmdID;
+  char msg[32];
+} __attribute__ ((packed));
 
 //  Betaflight additions
 
