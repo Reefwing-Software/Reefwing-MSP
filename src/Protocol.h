@@ -5,11 +5,11 @@
   @copyright  Please see the accompanying LICENSE file.
 
   Code:        David Such
-  Version:     1.0.3
+  Version:     1.0.4
   Date:        02/06/22
 
   1.0.0 Original Release.           22/02/22
-  1.0.3 IMU ODR & offset bias added 02/06/22
+  1.0.4 IMU ODR & offset bias added 02/06/22
 
   Credit - Version 2.4 of the MultiWii Protocol class.
            ref: https://github.com/xdu-aero-association/MultiWii_2_4/blob/master/MultiWii/Protocol.cpp
@@ -702,15 +702,15 @@ struct msp_set_wp_t {
 
 // MSP_IMU_ODR reply
 struct msp_imu_odr_t {
-  uint8_t gyro;
-  uint8_t acc;
-  uint8_t mag;
+  uint16_t gyro;
+  uint16_t acc;
+  uint16_t mag;
 } __attribute__ ((packed));
 
 // MSP_IMU_BIAS reply
 struct msp_imu_bias_t {
-  int16_t acc[3];  // x, y, z
   int16_t gyro[3]; // x, y, z
+  int16_t acc[3];  // x, y, z
   int16_t mag[3];  // x, y, z  
 } __attribute__ ((packed));
 
