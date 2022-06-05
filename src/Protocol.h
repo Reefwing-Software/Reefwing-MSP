@@ -711,9 +711,15 @@ struct msp_imu_odr_t {
 
 // MSP_IMU_BIAS reply
 struct msp_imu_bias_t {
-  char * gyro[3]; // x, y, z
-  char * acc[3];  // x, y, z
-  char * mag[3];  // x, y, z  
+  char gyro_x[10];
+  char gyro_y[10]; 
+  char gyro_z[10];
+  char acc_x[10];
+  char acc_y[10];
+  char acc_z[10];  
+  char mag_x[10]; 
+  char mag_y[10]; 
+  char mag_z[10];  
 } __attribute__ ((packed));
 
 //  MSP Received Packet contents
