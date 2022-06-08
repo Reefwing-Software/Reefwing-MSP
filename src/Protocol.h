@@ -5,11 +5,11 @@
   @copyright  Please see the accompanying LICENSE file.
 
   Code:        David Such
-  Version:     1.0.6
+  Version:     1.0.7
   Date:        02/06/22
 
   1.0.0 Original Release.           22/02/22
-  1.0.6 IMU ODR & offset bias added 02/06/22
+  1.0.7 IMU ODR & offset bias added 02/06/22
 
   Credit - Version 2.4 of the MultiWii Protocol class.
            ref: https://github.com/xdu-aero-association/MultiWii_2_4/blob/master/MultiWii/Protocol.cpp
@@ -66,6 +66,8 @@
 #define MSP_IMU_BIAS             51   //out message           Returns the x,y and z bias offsets for gyro, acc and mag
 
 #define MSP_IMU_CALIBRATION      75   //in message            no param
+#define MSP_SET_ARM              76   //in message            no param - forces drone into ARMED state
+#define MSP_SET_DISARM           77   //in message            no param - forces drone into DISARMED state
 
 /******************************************************************
  *
@@ -151,6 +153,7 @@
 #define MSP_MAX_SERVO_RULES (2 * MSP_MAX_SUPPORTED_SERVOS)
 #define MSP_MAX_SUPPORTED_MOTORS 8
 #define MSP_MAX_SUPPORTED_CHANNELS 16
+#define MSP_QUAD_MOTORS 4
 
 // values for msp_raw_gps_t.fixType
 #define MSP_GPS_NO_FIX 0
@@ -425,7 +428,7 @@ struct msp_servo_mix_rules_t {
 
 // MSP_MOTOR reply
 struct msp_motor_t {
-  uint16_t motor[MSP_MAX_SUPPORTED_MOTORS];
+  uint16_t motor[MSP_QUAD_MOTORS];
 } __attribute__ ((packed));
 
 
@@ -701,6 +704,11 @@ struct msp_set_wp_t {
 } __attribute__ ((packed));
 
 //  Nexgen additions
+
+// MSP_SET_MOTOR cmd
+struct msp_set_motor_t {
+  uint16_t motor[MSP_QUAD_MOTORS];
+} __attribute__ ((packed));
 
 // MSP_IMU_ODR reply
 struct msp_imu_odr_t {
