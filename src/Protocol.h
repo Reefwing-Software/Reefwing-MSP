@@ -154,6 +154,7 @@
 #define MSP_MAX_SUPPORTED_MOTORS 8
 #define MSP_MAX_SUPPORTED_CHANNELS 16
 #define MSP_QUAD_MOTORS 4
+#define MSP_PAYLOAD_SIZE  4
 
 // values for msp_raw_gps_t.fixType
 #define MSP_GPS_NO_FIX 0
@@ -735,7 +736,7 @@ struct msp_packet_t {
   // recvSize can be NULL
   uint8_t recvMessageID;
   uint8_t recvSizeValue;
-  void * payload;
+  uint8_t payload[MSP_PAYLOAD_SIZE];
   uint8_t maxSize;
   uint8_t recvSize;
 };
