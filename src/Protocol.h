@@ -5,11 +5,12 @@
   @copyright  Please see the accompanying LICENSE file.
 
   Code:        David Such
-  Version:     1.0.7
-  Date:        02/06/22
+  Version:     1.0.8
+  Date:        17/06/22
 
   1.0.0 Original Release.           22/02/22
-  1.0.7 IMU ODR & offset bias added 02/06/22
+  1.0.7 IMU ODR & offset bias.      02/06/22
+  1.0.8 Nexgen Specific commands.   17/06/22
 
   Credit - Version 2.4 of the MultiWii Protocol class.
            ref: https://github.com/xdu-aero-association/MultiWii_2_4/blob/master/MultiWii/Protocol.cpp
@@ -68,6 +69,8 @@
 #define MSP_IMU_CALIBRATION      75   //in message            no param
 #define MSP_SET_ARM              76   //in message            no param - forces drone into ARMED state
 #define MSP_SET_DISARM           77   //in message            no param - forces drone into DISARMED state
+#define MSP_STOP_STREAM          78   //in message            no param - stops all data streaming (PID, SBUS & IMU)
+#define MSP_CONFIG_CLOSE         79   //in message            no param - Configurator about to disconnect
 
 /******************************************************************
  *
