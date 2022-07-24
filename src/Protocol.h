@@ -5,12 +5,12 @@
   @copyright  Please see the accompanying LICENSE file.
 
   Code:        David Such
-  Version:     1.0.8
-  Date:        17/06/22
+  Version:     1.0.9
+  Date:        24/06/22
 
   1.0.0 Original Release.           22/02/22
   1.0.7 IMU ODR & offset bias.      02/06/22
-  1.0.8 Nexgen Specific commands.   17/06/22
+  1.0.9 Nexgen Specific commands.   24/06/22
 
   Credit - Version 2.4 of the MultiWii Protocol class.
            ref: https://github.com/xdu-aero-association/MultiWii_2_4/blob/master/MultiWii/Protocol.cpp
@@ -466,7 +466,7 @@ struct msp_sonar_altitude_t {
 
 // MSP_ANALOG reply
 struct msp_analog_t {
-  uint8_t  vbat;     // 0...255
+  uint16_t  vbat;     // Converted to int x 100
   uint16_t mAhDrawn; // milliamp hours drawn from battery
   uint16_t rssi;     // 0..1023
   int16_t  amperage; // send amperage in 0.01 A steps, range is -320A to 320A  
