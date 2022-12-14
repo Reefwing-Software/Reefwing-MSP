@@ -6,10 +6,11 @@
   @copyright  Please see the accompanying LICENSE file.
 
   Code:        David Such
-  Version:     1.0.0
-  Date:        22/02/22
+  Version:     2.0.0
+  Date:        14/12/22
 
   1.0.0 Original Release.           22/02/22
+  2.0.0 Change Repo and Branding    14/12/22
 
   This example, allows you to see an MSP request in the Arduino Serial Monitor.
   Select "Newline" and 115200 baud from the pulldown menus in the Serial Monitor.
@@ -43,14 +44,14 @@
 
 ******************************************************************/
 
-#include <NexgenMSP.h>
+#include <ReefwingMSP.h>
 
 #define MAX_CMD_SIZE    32
 #define RETURN    '\r'
 #define NEW_LINE  '\n'
 #define NULL_CHAR '\0'
 
-NexgenMSP msp;
+ReefwingMSP msp;
 
 char cmdString[MAX_CMD_SIZE];
 
@@ -78,7 +79,7 @@ void commandFromSerial(char *cmdString) {
 
 void printInstructions() {
   Serial.println("******************************************************************");
-  Serial.println("                 Nexgen MSP - View Request");
+  Serial.println("                 Reefwing MSP - View Request");
   Serial.println("******************************************************************\n");
   Serial.println("This sketch allows you to see MSP requests in the Serial Monitor.");
   Serial.println("Select 115200 baud & NewLine from the pulldown menus in Monitor.");

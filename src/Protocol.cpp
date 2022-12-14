@@ -5,12 +5,13 @@
   @copyright  Please see the accompanying LICENSE file.
 
   Code:        David Such
-  Version:     1.0.9
-  Date:        24/06/22
+  Version:     2.0.0
+  Date:        14/12/22
 
   1.0.0 Original Release.           22/02/22
   1.0.7 IMU ODR & offset bias.      02/06/22
-  1.0.9 Nexgen Specific commands.   24/06/22
+  1.0.9 Reefwing Specific cmds.     24/06/22
+  2.0.0 Change Repo and Branding    14/12/22
 
   Credit - Version 2.4 of the MultiWii Protocol class.
            ref: https://github.com/xdu-aero-association/MultiWii_2_4/blob/master/MultiWii/Protocol.cpp

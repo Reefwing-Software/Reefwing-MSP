@@ -6,10 +6,11 @@
   @copyright  Please see the accompanying LICENSE file.
 
   Code:        David Such
-  Version:     1.0.0
-  Date:        22/02/22
+  Version:     2.0.0
+  Date:        14/12/22
 
   1.0.0 Original Release.           22/02/22
+  2.0.0 Change Repo and Branding    14/12/22
 
   How to Use:
 
@@ -32,9 +33,9 @@
 
 ******************************************************************/
 
-#include <NexgenMSP.h>
+#include <ReefwingMSP.h>
 
-NexgenMSP msp;
+ReefwingMSP msp;
 
 msp_api_version_t api;
 msp_ident_t identReply;
@@ -56,7 +57,7 @@ void setup() {
   identReply.capability = MSP_FEATURE_VBAT;
 
   //  Betaflight message variant
-  strcpy(variant.flightControlIdentifier, NEXGEN_IDENTIFIER);
+  strcpy(variant.flightControlIdentifier, REEFWING_IDENTIFIER);
 }
 
 void loop() {

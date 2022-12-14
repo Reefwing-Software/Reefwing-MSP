@@ -1,14 +1,14 @@
-# Nexgen MSP
+# Reefwing MSP
 
- Nexgen MultiWii Serial Protocol (MSP)
+ Reefwing MultiWii Serial Protocol (MSP)
 
-NexgenMSP is a light weight Arduino implementation of the MultiWii Serial Protocol. This is required for easy configuration, simulation, telemetry, black box recording and On Screen Display (OSD) for First Person View (FPV) goggles.
+ReefwingMSP is a light weight Arduino implementation of the MultiWii Serial Protocol. This is required for easy configuration, simulation, telemetry, black box recording and On Screen Display (OSD) for First Person View (FPV) goggles.
 
 This library was designed for incorporation into flight controller software running on Arduino hardware.
 
 ## MultiWii Serial Protocol (MSP)
 
-The MultiWii Serial Protocol was originally created for use with the MultiWii Configurator (a Processing application like the Nexgen Configurator) to control a multirotor RC model. The first draft of the protocol was defined in 2012 and was was initially developed to support Nintendo Wii console gyroscopes and accelerometers (hence the name).
+The MultiWii Serial Protocol was originally created for use with the MultiWii Configurator (a Processing application like the Reefwing Configurator) to control a multirotor RC model. The first draft of the protocol was defined in 2012 and was was initially developed to support Nintendo Wii console gyroscopes and accelerometers (hence the name).
 
 It is now used by a number of open source flight controllers like ArduPilot, the BetaFlight/CleanFlight family, HackFlight and iNav.
 
@@ -35,7 +35,7 @@ The original design objectives for the MSP were:
 - Backwards compatible. It should be possible to add new commands without breaking previous versions of the protocol.
 - Variable data length to future proof the protocol (e.g., to add a new PID controller).
 
-As described above, originally MSP operated in `polling mode`, and would only send a message when requested. With MSP now being used for things like On Screen Displays (OSD) a `telemetry push mode` has been added to some implementations. NexgenMSP currently only supports `polling mode`. 
+As described above, originally MSP operated in `polling mode`, and would only send a message when requested. With MSP now being used for things like On Screen Displays (OSD) a `telemetry push mode` has been added to some implementations. ReefwingMSP currently only supports `polling mode`. 
 
 There are three types of MSP message that can be sent:
 - Command - a message sent to the flight controller which has some information to be sent.
@@ -60,7 +60,7 @@ The fourth byte is the length (in bytes) of the data payload. For example, if th
 
 ## Type
 
-The type byte is similar to our command/request byte. It defines the command to the drone, request for information or the type of response. A list of the original MSP command types is provided in the reference folder of the NexgenMSP library. 
+The type byte is similar to our command/request byte. It defines the command to the drone, request for information or the type of response. A list of the original MSP command types is provided in the reference folder of the ReefwingMSP library. 
 
 The incoming message flow is composed of commands and requests while the outgoing flow contains responses. 
 
@@ -73,7 +73,7 @@ By agreement, the message ID range from 50–99 won't be assigned in future vers
 
 ## Payload
 
-The data payload depends on the type request. An example is the data request MSP_IDENT. This returns three `uint8_t` and one `uint32_t` bits of data. A full list of the returned data types is provided in the reference folder of the NexgenMSP library. Multi-byte data (e.g., `uint16_t`) is transmitted LSB first.
+The data payload depends on the type request. An example is the data request MSP_IDENT. This returns three `uint8_t` and one `uint32_t` bits of data. A full list of the returned data types is provided in the reference folder of the ReefwingMSP library. Multi-byte data (e.g., `uint16_t`) is transmitted LSB first.
 
 ## Checksum
 
@@ -175,9 +175,9 @@ uint8_t crc8_dvb_s2(uint8_t crc, unsigned char a) {
 }
 ```
 
-## NexgenMSP
+## ReefwingMSP
 
-The Nexgen MSP library is a fork of [version 2.4 of the MultiWii Protocol class](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Fxdu-aero-association%2FMultiWii_2_4%2Fblob%2Fmaster%2FMultiWii%2FProtocol.cpp), the [Betaflight MSP Protocol](https://github.com/betaflight/betaflight/blob/master/src/main/msp/msp_protocol.h) and a fork of the [Arduino library for MSP](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Ffdivitto%2FMSP) (which has been archived) plus some custom additions for the Nexgen Configurator. This first version of our library uses MSP v1, in a future release we will add support for version 2.
+The Reefwing MSP library is a fork of [version 2.4 of the MultiWii Protocol class](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Fxdu-aero-association%2FMultiWii_2_4%2Fblob%2Fmaster%2FMultiWii%2FProtocol.cpp), the [Betaflight MSP Protocol](https://github.com/betaflight/betaflight/blob/master/src/main/msp/msp_protocol.h) and a fork of the [Arduino library for MSP](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Ffdivitto%2FMSP) (which has been archived) plus some custom additions for the Reefwing Configurator. This first version of our library uses MSP v1, in a future release we will add support for version 2.
 
 Note that the archived [Arduino library for MSP](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Ffdivitto%2FMSP) is designed to talk with a flight controller, probably for a black box application. Because of this, the message direction indicators (`<` and `>`) are back to front for our requirements. In addition, we have added two new methods:
 
@@ -193,15 +193,15 @@ The MSP protocol was originally designed to only send messages when requested bu
 In accordance with the Betaflight MSP guidelines we have created a flight controller `IDENT` for our subset of the protocol implemented. This `#define` may be found in `Protocol.h`.
 
 ```c++
-#define NEXGEN_IDENTIFIER "NXGN";
+#define REEFWING_IDENTIFIER "RWNG";
 ```
 
-To use the library, first include it and then create a new instance of the NexgenMSP class.
+To use the library, first include it and then create a new instance of the ReefwingMSP class.
 
 ```c++
-#include <NexgenMSP.h>
+#include <ReefwingMSP.h>
 
-NexgenMSP msp;
+ReefwingMSP msp;
 ```
 
 Then in `setup()`, open the Serial port and await a connection (required for Arduino boards with native USB). Then allocate the serial stream and assign a timeout value (if left blank the default timeout = 500 ms).
@@ -264,7 +264,7 @@ bool recv(uint8_t *messageID, void *payload, uint8_t maxSize, uint8_t *recvSize)
 
 Note that the messageID and recvSize variables should be pointers to uint8_t and the payload is a pointer to void.
 
-### Nexgen Protocol Tester
+### Reefwing Protocol Tester
 
 The Protocol Tester runs on a PC with OS X, Windows or Linux. You will need to open up the processing sketch, protocolTester.pde in the Processing 3 environment and run it. The components of the tester are as follows:
 

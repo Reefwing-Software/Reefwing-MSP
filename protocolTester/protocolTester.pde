@@ -1,15 +1,17 @@
 /******************************************************************
  MultiWii Serial Protocol Tester
  
- @file    protocolTester.pde
- @brief   For sending and displaying MSP messages
- @author  David Such
+ @file       protocolTester.pde
+ @brief      For sending and displaying MSP messages
+ @author     David Such
+ @copyright  Please see the accompanying LICENSE file.
  
  Code:        David Such
- Version:     1.0
- Date:        19/04/2022
+ Version:     2.0.0
+ Date:        14/12/2022
  
- 1.0  Original Release              19/04/22
+ 1.0.0  Original Release              19/04/22
+ 2.0.0  Change Repo and Branding      14/12/22
  
  ******************************************************************
  
@@ -45,9 +47,9 @@ final color cp5brown = color(165, 42, 42);
 final color lightBlue = color(0, 0, 255);
 final color darkGrey = color(43, 45, 47);
 final color darkGreen = color(21, 71, 52);
-final color nexgenGold = color(203, 197, 150);
-final color nexgenGreen = color(171, 253, 4);
-final color nexgenAqua = color(0, 255, 196);
+final color ReefwingGold = color(203, 197, 150);
+final color ReefwingGreen = color(171, 253, 4);
+final color ReefwingAqua = color(0, 255, 196);
  
  /******************************************************************
  CONSTANTS - GENERAL
@@ -215,7 +217,7 @@ void setup()
   serialPortsList = cp5console.addScrollableList("serialPorts")
     .setCaptionLabel("Serial Ports")
     .setPosition(width - 350, 20)
-    .setColorValue(nexgenAqua)
+    .setColorValue(ReefwingAqua)
     .setColorBackground(darkGrey)
     .setBarHeight(30)
     .setWidth(320)
@@ -237,7 +239,7 @@ void setup()
   mspRequestList = cp5console.addScrollableList("mspRequests")
     .setCaptionLabel("MSP Requests")
     .setPosition(20, 250)
-    .setColorValue(nexgenGold)
+    .setColorValue(ReefwingGold)
     .setColorBackground(darkGrey)
     .setBarHeight(30)
     .setWidth(320)
@@ -315,7 +317,7 @@ void drawBackground()
   textSize(16);
   textFont(smallBold);
   text(version, 20, 50);
-  setGradient(270, 10, 365, 30, color(0), nexgenGold, X_AXIS);
+  setGradient(270, 10, 365, 30, color(0), ReefwingGold, X_AXIS);
   popMatrix();
 }
 
@@ -325,7 +327,7 @@ void drawFrameRate(int x, int y) {
   rect(x, y, 95, 20);
   rect(x, y+20, 95, 20);
   
-  fill(nexgenAqua);
+  fill(ReefwingAqua);
   textFont(bold);
   textSize(14); 
   text("Frame Rate", x+8, y+15);
@@ -340,7 +342,7 @@ public void drawCommand(int x, int y) {
   rect(x+40, y, 40, 40);
   rect(x+80, y, 40, 40);
   
-  fill(nexgenGold);
+  fill(ReefwingGold);
   rect(x+120, y, 40, 40);
   rect(x+160, y, 40, 40);
   

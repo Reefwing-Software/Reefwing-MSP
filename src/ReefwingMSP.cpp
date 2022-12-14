@@ -1,16 +1,17 @@
 /******************************************************************
-  @file       NexgenMSP.cpp
+  @file       ReefwingMSP.cpp
   @brief      A light weight Arduino implementation of the MultiWii Serial Protocol.
   @author     David Such
   @copyright  Please see the accompanying LICENSE file.
 
   Code:        David Such
-  Version:     1.0.9
-  Date:        24/06/22
+  Version:     2.0.0
+  Date:        14/12/22
 
   1.0.0 Original Release.           22/02/22
   1.0.7 IMU ODR & offset bias.      02/06/22
-  1.0.9 Nexgen Specific commands.   24/06/22
+  1.0.9 Reefwing Specific cmds.     24/06/22
+  2.0.0 Change Repo and Branding    14/12/22
 
   Credit - Version 2.4 of the MultiWii Protocol class.
            ref: https://github.com/xdu-aero-association/MultiWii_2_4/blob/master/MultiWii/Protocol.cpp
@@ -23,21 +24,21 @@
 
 #include <Arduino.h>
 
-#include "NexgenMSP.h"
+#include "ReefwingMSP.h"
 
 
-void NexgenMSP::begin(Stream & stream, uint32_t timeout) {
+void ReefwingMSP::begin(Stream & stream, uint32_t timeout) {
   _stream   = &stream;
   _timeout  = timeout;
 }
 
-void NexgenMSP::reset() {
+void ReefwingMSP::reset() {
   _stream->flush();
   while (_stream->available() > 0)
     _stream->read();
 }
 
-void NexgenMSP::send(uint8_t messageID, void * payload, uint8_t size) {
+void ReefwingMSP::send(uint8_t messageID, void * payload, uint8_t size) {
   _stream->write('$');
   _stream->write('M');
   _stream->write('<');
@@ -55,7 +56,7 @@ void NexgenMSP::send(uint8_t messageID, void * payload, uint8_t size) {
   _stream->write(checksum);
 }
 
-void NexgenMSP::error(uint8_t messageID, void * payload, uint8_t size) {
+void ReefwingMSP::error(uint8_t messageID, void * payload, uint8_t size) {
   _stream->write('$');
   _stream->write('M');
   _stream->write('!');
@@ -73,7 +74,7 @@ void NexgenMSP::error(uint8_t messageID, void * payload, uint8_t size) {
   _stream->write(checksum);
 }
 
-void NexgenMSP::response(uint8_t messageID, void * payload, uint8_t size) {
+void ReefwingMSP::response(uint8_t messageID, void * payload, uint8_t size) {
   _stream->write('$');
   _stream->write('M');
   _stream->write('>');
@@ -92,7 +93,7 @@ void NexgenMSP::response(uint8_t messageID, void * payload, uint8_t size) {
 }
 
 // timeout in milliseconds
-bool NexgenMSP::recv(uint8_t * messageID, void * payload, uint8_t maxSize, uint8_t * recvSize) {
+bool ReefwingMSP::recv(uint8_t * messageID, void * payload, uint8_t maxSize, uint8_t * recvSize) {
   uint32_t t0 = millis();
 
   while (1) {
@@ -148,7 +149,7 @@ bool NexgenMSP::recv(uint8_t * messageID, void * payload, uint8_t maxSize, uint8
 
 // wait for messageID
 // recvSize can be NULL
-bool NexgenMSP::waitFor(uint8_t messageID, void * payload, uint8_t maxSize, uint8_t * recvSize) {
+bool ReefwingMSP::waitFor(uint8_t messageID, void * payload, uint8_t maxSize, uint8_t * recvSize) {
   uint8_t recvMessageID;
   uint8_t recvSizeValue;
   uint32_t t0 = millis();
@@ -163,13 +164,13 @@ bool NexgenMSP::waitFor(uint8_t messageID, void * payload, uint8_t maxSize, uint
 
 // send a message and wait for the reply
 // recvSize can be NULL
-bool NexgenMSP::request(uint8_t messageID, void * payload, uint8_t maxSize, uint8_t * recvSize) {
+bool ReefwingMSP::request(uint8_t messageID, void * payload, uint8_t maxSize, uint8_t * recvSize) {
   send(messageID, NULL, 0);
   return waitFor(messageID, payload, maxSize, recvSize);
 }
 
 // send message and wait for ack
-bool NexgenMSP::command(uint8_t messageID, void * payload, uint8_t size, bool waitACK) {
+bool ReefwingMSP::command(uint8_t messageID, void * payload, uint8_t size, bool waitACK) {
   send(messageID, payload, size);
 
   // ack required
@@ -216,7 +217,7 @@ static const uint8_t BOXIDS[30] PROGMEM = {
 
 // returns active mode (using MSP_STATUS and MSP_BOXIDS messages)
 // see MSP_MODE_... for bits inside activeModes
-bool NexgenMSP::getActiveModes(uint32_t * activeModes) {
+bool ReefwingMSP::getActiveModes(uint32_t * activeModes) {
   // request status ex
   msp_status_t status;
   if (request(MSP_STATUS, &status, sizeof(status))) {

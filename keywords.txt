@@ -1,12 +1,12 @@
 #######################################
-# IDE Map for Nexgen MSP
+# IDE Map for Reefwing MSP
 #######################################
 
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
 
-NexgenMSP KEYWORD1
+ReefwingMSP KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
